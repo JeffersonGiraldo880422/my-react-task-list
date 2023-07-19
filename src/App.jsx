@@ -9,11 +9,10 @@ import './App.css';
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  
   const handleAddTask = (newTask) => {
-    setTasks([...tasks, newTask]);
-    let storedTasks = [...tasks];
-    localStorage.setItem("storedTasksMemory",JSON.stringify(storedTasks));
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
+    localStorage.setItem("storedTasksMemory", JSON.stringify(updatedTasks));
   };
 
   const handleToggleTask = (id) => {
@@ -25,32 +24,29 @@ function App() {
         };
       }
       return task;
-
     });
 
     setTasks(updatedTasks);
-    storedTasks = [...tasks];
-    localStorage.setItem("storedTasksMemory",JSON.stringify(storedTasks));
+    localStorage.setItem("storedTasksMemory", JSON.stringify(updatedTasks));
   };
 
   const handleDeleteCompletedTasks = () => {
     const remainingTasks = tasks.filter((task) => !task.completed);
     setTasks(remainingTasks);
-    storedTasks = [...tasks];
-    localStorage.setItem("storedTasksMemory",JSON.stringify(storedTasks));
+    localStorage.setItem("storedTasksMemory", JSON.stringify(remainingTasks));
   };
 
-  useEffect (() => {
+  useEffect(() => {
     const localStorageData = localStorage.getItem("storedTasksMemory");
     if (localStorageData) {
-      try{
+      try {
         const storedTasks = JSON.parse(localStorageData);
         setTasks(storedTasks);
-      }catch(err){
-        console.err("Error parsing stored tasks memory from localStorage")
+      } catch (err) {
+        console.error("Error parsing stored tasks memory from localStorage");
       }
     }
-  },[]);
+  }, []);
 
   return (
     <div className="app">
