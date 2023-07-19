@@ -1,41 +1,53 @@
 import React, { useState } from 'react';
 
 function Entrada({ onAddTask }) {
-  const [task, setTask] = useState('');
+  const [taskName, setTaskName] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
 
-  const handleInputChange = (event) => {
-    setTask(event.target.value);
+  const handleNameChange = (event) => {
+    setTaskName(event.target.value);
   };
 
-  const handleAddTask = () => {
-    if (task.trim() !== '') {
+  const handleDescriptionChange = (event) => {
+    setTaskDescription(event.target.value);
+  };
+
+  const handleAddTask = (event) => {
+    event.preventDefault();
+
+    if (taskName.trim().length >= 3) {
       const newTask = {
         id: Date.now(),
-        title: task,
+        title: taskName,
+        description: taskDescription,
         completed: false,
       };
 
       onAddTask(newTask);
-      setTask('');
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleAddTask();
+      setTaskName('');
+      setTaskDescription('');
+    } else {
+      alert('El nombre de la tarea debe tener al menos 3 caracteres.');
     }
   };
 
   return (
     <div className="entrada">
-      <input
-        type="text"
-        value={task}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyPress}
-        placeholder="Ingrese una nueva tarea..."
-      />
-      <button onClick={handleAddTask}>Agregar tarea</button>
+      <form onSubmit={handleAddTask}>
+        <input
+          type="text"
+          value={taskName}
+          onChange={handleNameChange}
+          placeholder="Ingrese el nombre de la tarea..."
+          required
+        />
+        <input
+          value={taskDescription}
+          onChange={handleDescriptionChange}
+          placeholder="Ingrese la descripción de la tarea..."
+        ></input>
+        <button type="submit">Agregar tarea</button>
+      </form>
     </div>
   );
 }

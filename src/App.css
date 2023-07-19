@@ -57,9 +57,14 @@ body {
   margin-bottom: 10px;
 }
 
-.task.completed span {
+.task.completed p {
   text-decoration: line-through;
-  color: #888;
+  color: #88
+  8;
+}
+
+.task.completed .edit-icon {
+  display: none;
 }
 
 .eliminar {

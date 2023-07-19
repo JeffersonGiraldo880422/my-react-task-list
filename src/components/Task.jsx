@@ -1,61 +1,59 @@
-import React, { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaEdit } from "react-icons/fa";
 
 function Task({ task, onToggleTask, onUpdateTask }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description);
+  const [editing, setEditing] = useState(false);
+  const [updatedTitle, setUpdatedTitle] = useState(task.title);
+  const [updatedDescription, setUpdatedDescription] = useState(
+    task.description
+  );
 
   const handleToggle = () => {
     onToggleTask(task.id);
   };
 
   const handleEdit = () => {
-    setIsEditing(true);
+    setUpdatedDescription(task.description); // Restaurar el valor original de task.description
+    setEditing(true);
+  };
+
+  const handleSave = () => {
+    if (updatedTitle.trim() !== "") {
+      onUpdateTask(task.id, updatedTitle, updatedDescription);
+      setEditing(false);
+    }
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
-    setTitle(task.title);
-    setDescription(task.description);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (title.trim().length < 3) {
-      alert("El nombre de la tarea debe tener al menos 3 caracteres.");
-      return;
-    }
-
-    onUpdateTask(task.id, title, description);
-    setIsEditing(false);
+    setUpdatedTitle(task.title);
+    setUpdatedDescription(task.description);
+    setEditing(false);
   };
 
   return (
-    <li className={`task ${task.completed ? 'completed' : ''}`}>
-      <input
-        type="checkbox"
-        checked={task.completed}
-        onChange={handleToggle}
-      />
-      {isEditing ? (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <button type="submit">Guardar</button>
-          <button type="button" onClick={handleCancel}>Cancelar</button>
-        </form>
+    <li className={`task ${task.completed ? "completed" : ""}`}>
+      <input type="checkbox" checked={task.completed} onChange={handleToggle} />
+      {editing ? (
+        <div>
+          <form onSubmit={handleSave}>
+            <input
+              type="text"
+              value={updatedTitle}
+              onChange={(e) => setUpdatedTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              value={updatedDescription}
+              onChange={(e) => setUpdatedDescription(e.target.value)}
+            ></input>
+            <button type="submit">Guardar</button>
+            <button onClick={handleCancel}>Cancelar</button>
+          </form>
+        </div>
       ) : (
         <div>
-          <span>{task.title}</span>
-          <span>{task.description}</span>
+          <p>{task.title}</p>
+          {task.description && !editing ? <p>{task.description}</p> : null}
           <FaEdit className="edit-icon" onClick={handleEdit} />
         </div>
       )}

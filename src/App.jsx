@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import Header from './components/Header';
 import Entrada from './components/Entrada';
@@ -10,6 +10,10 @@ import './App.css';
 
 function App() {
   const { tasks, handleAddTask, handleToggleTask, handleUpdateTask, handleDeleteCompletedTasks } = useTasks();
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   return (
     <div className="app">
