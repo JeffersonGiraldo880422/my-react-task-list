@@ -1,7 +1,12 @@
-import React from 'react';
+import React from "react";
+import { Box, Heading } from "@chakra-ui/react";
 
-function Header({ title }) {
-  return <h1 className="header">{title}</h1>;
-}
+const Header = ({ title }) => {
+  return (
+    <Box bg="teal.500" p={4}>
+      <Heading color="white">{title}</Heading>
+    </Box>
+  );
+};
 
 export default Header;

@@ -1,64 +1,74 @@
 import React, { useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import { Flex, Checkbox, IconButton, Input, Button } from "@chakra-ui/react";
+import { FaEdit, FaTrash, FaCheck } from "react-icons/fa";
+import { useTaskContext } from "./TaskContext";
 
-function Task({ task, onToggleTask, onUpdateTask }) {
-  const [editing, setEditing] = useState(false);
-  const [updatedTitle, setUpdatedTitle] = useState(task.title);
-  const [updatedDescription, setUpdatedDescription] = useState(
-    task.description
-  );
+const Task = ({ task }) => {
+  const { deleteTask, editTask } = useTaskContext();
+  const [isChecked, setIsChecked] = useState(false);
+  const [newTaskName, setNewTaskName] = useState(task.name);
+  const [editMode, setEditMode] = useState(false);
 
-  const handleToggle = () => {
-    onToggleTask(task.id);
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
   };
 
-  const handleEdit = () => {
-    setUpdatedDescription(task.description); // Restaurar el valor original de task.description
-    setEditing(true);
+  const onEdit = () => {
+    setEditMode(true);
   };
 
-  const handleSave = () => {
-    if (updatedTitle.trim() !== "") {
-      onUpdateTask(task.id, updatedTitle, updatedDescription);
-      setEditing(false);
+  const handleCreateTask = () => {
+    if (editMode) {
+      editTask(task.id, newTaskName);
+      setEditMode(false);
+    } else {
+      editTask(task.id, newTaskName);
+      setNewTaskName("");
     }
   };
 
-  const handleCancel = () => {
-    setUpdatedTitle(task.title);
-    setUpdatedDescription(task.description);
-    setEditing(false);
-  };
-
   return (
-    <li className={`task ${task.completed ? "completed" : ""}`}>
-      <input type="checkbox" checked={task.completed} onChange={handleToggle} />
-      {editing ? (
-        <div>
-          <form onSubmit={handleSave}>
-            <input
-              type="text"
-              value={updatedTitle}
-              onChange={(e) => setUpdatedTitle(e.target.value)}
-            />
-            <input
-              type="text"
-              value={updatedDescription}
-              onChange={(e) => setUpdatedDescription(e.target.value)}
-            ></input>
-            <button type="submit">Guardar</button>
-            <button onClick={handleCancel}>Cancelar</button>
-          </form>
-        </div>
-      ) : (
-        <div>
-          <p>{task.title}</p>
-          {task.description && !editing ? <p>{task.description}</p> : null}
-          <FaEdit className="edit-icon" onClick={handleEdit} />
-        </div>
-      )}
-    </li>
+    <Flex alignItems="center" justify="space-between" p={2}>
+      <Flex>
+        {editMode ? (
+          <Input
+            placeholder="Editar tarea"
+            value={newTaskName}
+            onChange={(e) => setNewTaskName(e.target.value)}
+            mr={2}
+          />
+        ) : (
+          <Checkbox isChecked={isChecked} onChange={handleCheckboxChange}>
+            {isChecked ? <s>{task.name}</s> : task.name}
+          </Checkbox>
+        )}
+
+        {editMode && (
+          <Button
+            colorScheme="teal"
+            leftIcon={<FaCheck />}
+            onClick={handleCreateTask}
+            ml={2} // Añade espacio a la izquierda del botón
+          >
+            Guardar
+          </Button>
+        )}
+
+        <IconButton
+          icon={<FaEdit />}
+          aria-label="Editar tarea"
+          onClick={onEdit}
+          ml={2} // Añade espacio a la izquierda del botón
+        />
+        <IconButton
+          icon={<FaTrash />}
+          aria-label="Eliminar tarea"
+          onClick={() => deleteTask(task.id)}
+          ml={2} // Añade espacio a la izquierda del botón
+        />
+      </Flex>
+    </Flex>
   );
-}
+};
 
 export default Task;
